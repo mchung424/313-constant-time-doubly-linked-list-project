@@ -1,0 +1,89 @@
+import java.util.Random;
+class Utility {
+
+  // Getting the data at constant time
+  public static <T> void runTest1(LinkedListArray<T> list) {
+    print("---------------TEST 1-----------------");
+    print("Current List: " + list);
+    T data = list.get(-1);
+    if (data != null) {
+      print("Data at position -1: " + data);
+    } else {
+      print("Could not retrieve element");
+    }
+    data = list.get(list.size());
+    if (data != null) {
+      print("Data at position " + list.size() + ": " + data);
+    } else {
+      print("Could not retrieve element");
+    }
+    // Gets all of the elements at their current position
+    for (int i = 0; i < list.size(); i++) {
+      print("Data at position " + i + ": " + list.get(i));
+    }
+  }
+
+  // Testing the sorting function
+  public static <T> void runTest2(LinkedListArray<T> list) {
+    print("---------------TEST 2-----------------");
+    print("Current List: " + list);
+    list.sort();
+    print("Sorted List: " + list);
+  }
+
+  // Testing addBefore(T x, Node<T> node), addAfter(T x, Node<T> node)
+  public static <T> void runTest3(LinkedListArray<T> list, T d) {
+    print("---------------TEST 3----------------");
+    print("Current List: " + list);
+    Random r = new Random();
+    int i=r.nextInt(list.size()), 
+        j=r.nextInt(list.size());
+    Node newNode = list.get(j,0), currentNode = list.get(i,0);
+    list.addBefore(d, currentNode);
+    print("After addBefore(" +i+ ") List: " + list);
+    list.addAfter(d, newNode);
+    print("After addAfter(" +j+  ") List: " + list);
+    list.addBefore(d,null);
+    list.addAfter(d,null);
+  }
+
+  // Removes elements at random positions 
+  public static <T> void runTest4(LinkedListArray<T> list) {
+    print("---------------TEST 4----------------");
+    print("Current List: " + list);
+    Random r = new Random();
+    while(list.size() != 0) {
+      int position = r.nextInt(list.size());
+      list.remove(position);
+      print("After remove("+position+") List: " + list);
+    }
+  }
+
+  // Removes from head and tail until list is empty
+  public static <T> void runTest5(LinkedListArray<T> list) {
+    print("---------------TEST 5----------------");
+    print("Current List: " + list);
+    int n = list.size();
+    for (int i = 0; i <= n; i++) {
+      boolean isEven = i % 2 == 0;
+      boolean elementWasRemoved;
+      if(isEven) {
+        elementWasRemoved = list.removeFirst();
+      } else {
+        elementWasRemoved = list.removeLast();
+      }
+      if(elementWasRemoved && !isEven) {
+        print("List after removal from tail: " + list);
+      } else if(elementWasRemoved && isEven) {
+        print("List after removal from head: " + list);
+      } else {
+        print("Could not remove elements cause list is empty");
+      }
+    }
+  }
+
+  static void print(Object o){
+    System.out.println(o);
+  }
+
+}
