@@ -1,0 +1,57 @@
+class Node<T> {
+
+  private T data;
+  private Node<T> prev,next; 
+
+  public Node() {
+    data = null;
+    prev = next = null;
+  }
+
+  public Node(T data) {
+    this.data = data;
+    this.next = null;
+    this.prev = null;
+  }
+
+  public Node(T data, Node<T> next) {
+    this.data = data;
+    this.next = next;
+    this.prev = null;
+  }
+
+  public Node(T data, Node<T> prev, Node<T> next) {
+    this.data = data;
+    this.prev = prev;
+    this.next = next;
+  }
+  
+  public T getData() {
+    return this.data;
+  }
+
+  public Node<T> getNext() {
+    return this.next;
+  }
+
+  public Node<T> getPrev() {
+    return this.prev;
+  }
+
+  public void setData(T data) {
+    this.data = data;
+  }
+
+  public void setPrev(Node<T> prev) {
+    this.prev = prev;
+  }
+  
+  public void setNext(Node<T> next) {
+    this.next = next;
+  }
+
+  public String toString() {
+    return data.toString();
+  }
+  
+}
