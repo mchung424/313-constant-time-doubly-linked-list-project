@@ -1,0 +1,224 @@
+import java.util.*;
+class LinkedListArray<T> {
+  
+  private Map<Integer, Node<T>> map;
+  private Set<Node<T>> nodes;
+  private Node<T> header,trailer;
+  private int size, top, bottom;
+
+  public LinkedListArray() {
+    map = new TreeMap<>();
+    nodes = new HashSet<>();
+    header = new Node(null,null,null);
+    trailer = new Node(null,header,null);
+    header.setNext(trailer);
+    size = 0;
+    top = 0;
+    bottom = 0;
+  }
+
+  public int size() { return this.size; }
+
+  public boolean isEmpty(){ return size == 0; } 
+
+  public boolean contains(Node<T> node){ return nodes.contains(node); }
+  
+  public void insert(T x) {
+    Node<T> node = trailer.getPrev();
+    Node<T> newElement = new Node(x,node,trailer);
+    node.setNext(newElement);
+    trailer.setPrev(newElement);
+    nodes.add(newElement);
+    if(top!= 0 && bottom == 0) ++bottom;
+    map.put(bottom,newElement);
+    bottom++;
+    size++;
+  } 
+
+  public void insertHead(T x) {
+    Node<T> node = header.getNext();
+    Node<T> newElement = new Node(x,header,node);
+    header.setNext(newElement);
+    node.setPrev(newElement);
+    nodes.add(newElement);
+    if(top==0 && bottom != 0 )--top;
+    map.put(top,newElement);
+    top--;
+    size++;
+  }
+
+  public void addBefore(T x, Node<T> node) {
+    if (node == header || node == null) {
+      System.out.println("Cannot do insertion");
+      return;
+    }
+    Node<T> p = node.getPrev();
+    Node<T> newElement = new Node<>(x,p,node);
+    p.setNext(newElement);
+    node.setPrev(newElement);
+    size++;
+    nodes.add(newElement);
+    int counter = top+1;
+    Node<T> temp = header.getNext();
+    for (int i = top+1; i < bottom+1; i++) {
+      map.put(counter++,temp);
+      temp = temp.getNext();
+    }
+    bottom++;
+  }
+
+  public void addAfter(T x, Node<T> node) {
+    if (node == trailer || node == null){
+      System.out.println("Cannot do insertion");
+      return;
+    }
+    Node<T> n = node.getNext();
+    Node<T> newElement = new Node<>(x,node,n);
+    node.setNext(newElement);
+    n.setPrev(newElement);
+    size++;
+    nodes.add(newElement);
+    int counter = top+1;
+    Node<T> temp = header.getNext();
+    for (int i = top+1; i < bottom+1; i++) {
+      map.put(counter++,temp);
+      temp = temp.getNext();
+    }
+    bottom++;
+  }
+
+  public boolean removeFirst() {
+    if (size == 0)
+      return false;
+    Node<T> firstNode = header.getNext();
+    Node<T> n = firstNode.getNext();
+    header.setNext(n);
+    n.setPrev(header);
+    size--;
+    nodes.remove(firstNode);
+    map.remove(++top);
+    return true;
+  }
+  
+  public boolean removeLast(){
+    if(size==0)
+      return false;
+    Node<T> lastNode = trailer.getPrev();
+    Node<T> n = lastNode.getPrev();
+    n.setNext(trailer);
+    trailer.setPrev(n);
+    size--;
+    nodes.remove(lastNode);
+    map.remove(--bottom);
+    return true;
+  }
+  
+  public boolean remove(int position) {
+    if (position < 0 || position >= size){
+      return false;
+    }
+    Node<T> n = header.getNext();
+    int offset;
+    if(top < 0) {
+      offset = position+top;
+      if(offset == bottom)
+        offset--;
+    } else {
+      offset = position - top;
+    }
+    for(int i = top; i != offset; i++)
+      n = n.getNext();
+    Node<T> p = n.getPrev();
+    Node<T> q = n.getNext();
+    p.setNext(q);
+    q.setPrev(p);
+    size--;
+    nodes.remove(n);
+    int counter = top+1;
+    for (int i = top+1; i < bottom; i++) {
+      Node<T> m = map.get(i);
+      if (m == n) continue;
+      map.put(counter++,m);
+    }
+    this.map.remove(--bottom);
+    return true;
+  }
+  
+  public boolean remove(Node<T> node) {
+    if(node == header || node == trailer || node == null) {
+      return false;
+    }
+    Node<T> n = header.getNext();
+    while(n!=node)
+      n = n.getNext();
+    Node<T> p = n.getPrev();
+    Node<T> q = n.getNext();
+    p.setNext(q);
+    q.setPrev(p);
+    size--;
+    nodes.remove(n);
+    int counter = top+1;
+    for (int i = top+1; i < bottom; i++) {
+      Node<T> m = map.get(i);
+      if (m == n) continue;
+      map.put(counter++,m);
+    }
+    this.map.remove(--bottom);
+    return true;
+  }
+  
+  public <T extends Comparable<T>> void sort () {
+    ArrayList list = new ArrayList<>();
+    Node n = header.getNext();
+    for(; n != trailer; n = n.getNext()) {
+      list.add(n.getData());
+    }
+    Collections.sort(list);
+    n = header.getNext();
+    for (int i = 0; i < list.size(); i++) {
+      n.setData(list.get(i));
+      n = n.getNext();
+    }
+  }
+
+  public T get(int position) {
+    if (position < 0 || position >= size)
+      return null;
+    int offset;
+    if(top < 0) {
+      offset = position+top+1;
+      if(offset == bottom)
+        offset--;
+    } else {
+      offset = position - top;
+    }
+    return map.get(offset).getData();
+  }
+  
+  public Node<T> get(int position, int n) {
+    if (position < 0 || position >= size)
+      return null;
+    int offset;
+    if(top < 0) {
+      offset = position+top+1;
+      if(offset == bottom)
+        offset--;
+    } else {
+      offset = position - top;
+    }
+    return map.get(offset);
+  }
+  
+  public String toString() {
+    StringBuilder s = new StringBuilder();
+    s.append("[ ");
+    Node<T> n = header.getNext();
+    while (n != trailer) {
+      s.append(n.getData() + " ");
+      n = n.getNext();
+    }
+    s.append(']');
+    return s.toString();
+  }
+  
+}
